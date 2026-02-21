@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { DashboardData } from './types';
 
+const API_URL = import.meta.env.MODE === 'production' 
+  ? 'https://acessibilidade-digital-pcd.onrender.com' 
+  : 'http://localhost:8000';
+
 export const useAnalyze = () => {
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -10,7 +14,7 @@ export const useAnalyze = () => {
     if (!url) return;
     setIsLoading(true); setError(null);
     try {
-      const response = await fetch('http://localhost:8000/api/analyze', {
+      const response = await fetch(`${API_URL}/api/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({ url })
