@@ -1,7 +1,7 @@
 # ♿ Plataforma de Acessibilidade Digital PcD
 
 > [!TIP]
-> **Acesse a plataforma ao vivo:** [👉 Clique aqui para testar](https://acessibilidade-digital-pcd.vercel.app)
+> **Acesse a plataforma ao vivo:** <a href="https://acessibilidade-digital-pcd.vercel.app" target="_blank">👉 Clique aqui para testar</a>
 
 Uma plataforma **full-stack** desenvolvida para analisar, pontuar e fornecer recomendações práticas sobre a acessibilidade de websites.  
 O projeto automatiza a varredura de código HTML para identificar barreiras técnicas que dificultam ou impedem a navegação de pessoas com deficiências **visuais, motoras, cognitivas e auditivas**, com base nas diretrizes internacionais **WCAG**.
