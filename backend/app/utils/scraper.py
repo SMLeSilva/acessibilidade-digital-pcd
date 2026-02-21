@@ -2,11 +2,20 @@ from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
 from typing import Optional
 
+EXCLUDED_RESOURCE_TYPES = {"image", "media", "font", "stylesheet"}
+
 async def fetch_and_parse(url: str) -> Optional[BeautifulSoup]:
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
-            args=["--no-sandbox", "--disable-setuid-sandbox"]
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--no-zygote",
+                "--single-process"
+            ]
         )
         
         context = await browser.new_context(
@@ -16,8 +25,14 @@ async def fetch_and_parse(url: str) -> Optional[BeautifulSoup]:
         )
         
         page = await context.new_page()
+
+        await page.route(
+            "**/*",
+            lambda route: route.abort() if route.request.resource_type in EXCLUDED_RESOURCE_TYPES else route.continue_()
+        )
+
         try:
-            response = await page.goto(url, wait_until="networkidle", timeout=7500)
+            response = await page.goto(url, wait_until="load", timeout=10000)
             
             if not response or response.status >= 400:
                 print(f"Status inválido: {response.status if response else 'Sem resposta'}")
