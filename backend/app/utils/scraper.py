@@ -13,15 +13,13 @@ async def fetch_and_parse(url: str) -> Optional[BeautifulSoup]:
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
-                "--no-zygote",
-                "--single-process"
+                "--no-zygote"
             ]
         )
         
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-            viewport={'width': 1280, 'height': 800},
-            locale="pt-BR"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            viewport={'width': 1280, 'height': 800}
         )
         
         page = await context.new_page()
@@ -32,7 +30,7 @@ async def fetch_and_parse(url: str) -> Optional[BeautifulSoup]:
         )
 
         try:
-            response = await page.goto(url, wait_until="load", timeout=10000)
+            response = await page.goto(url, wait_until="domcontentloaded", timeout=30000)
             
             if not response or response.status >= 400:
                 print(f"Status inválido: {response.status if response else 'Sem resposta'}")
