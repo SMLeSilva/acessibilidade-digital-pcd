@@ -1,0 +1,32 @@
+from playwright.async_api import async_playwright
+from bs4 import BeautifulSoup
+from typing import Optional
+
+async def fetch_and_parse(url: str) -> Optional[BeautifulSoup]:
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-setuid-sandbox"]
+        )
+        
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+            viewport={'width': 1280, 'height': 800},
+            locale="pt-BR"
+        )
+        
+        page = await context.new_page()
+        try:
+            response = await page.goto(url, wait_until="networkidle", timeout=7500)
+            
+            if not response or response.status >= 400:
+                print(f"Status inválido: {response.status if response else 'Sem resposta'}")
+                return None
+                
+            html_content = await page.content()
+            return BeautifulSoup(html_content, 'lxml')
+        except Exception as e:
+            print(f"Falha no Playwright: {e}")
+            return None
+        finally:
+            await browser.close()
